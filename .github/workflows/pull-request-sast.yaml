@@ -25,4 +25,3 @@ jobs:
           scan-type: 'config'
           trivyignores: ".trivyignore"
           exit-code: '1'
-          severity: 'UNKNOWN,HIGH,CRITICAL'

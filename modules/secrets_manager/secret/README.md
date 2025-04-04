@@ -23,7 +23,8 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_name"></a> [name](#input\_name) | n/a | `string` | n/a | yes |
+| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | ARN of the KMS key to encrypt the secret | `string` | n/a | yes |
+| <a name="input_name"></a> [name](#input\_name) | Name of the secret | `string` | n/a | yes |
 
 ## Outputs
 
