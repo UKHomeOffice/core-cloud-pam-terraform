@@ -64,9 +64,12 @@ data "archive_file" "lambda" {
 }
 
 resource "aws_lambda_function" "team_sns_handler" {
+  architectures = ["arm64"]
   filename      = "lambda_function_payload.zip"
   function_name = var.function_name
+  handler       = "lambda_function.lambda_handler"
   role          = aws_iam_role.lambda_execution.arn
+  runtime       = "python3.13"
 
   source_code_hash = data.archive_file.lambda.output_base64sha256
 }
