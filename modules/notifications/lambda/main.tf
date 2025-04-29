@@ -58,7 +58,7 @@ resource "aws_iam_role_policy" "test_policy" {
 }
 
 data "archive_file" "lambda" {
-  type        = zip
+  type        = "zip"
   source_file = var.source_file
   output_path = "lambda_function_payload.zip"
 }
@@ -67,6 +67,8 @@ resource "aws_lambda_function" "team_sns_handler" {
   filename      = "lambda_function_payload.zip"
   function_name = var.function_name
   role          = aws_iam_role.lambda_execution
+
+  source_code_hash = data.archive_file.lambda.output_base64sha256
 }
 
 resource "aws_lambda_permission" "allow_sns" {
