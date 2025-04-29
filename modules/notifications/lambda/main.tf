@@ -66,7 +66,7 @@ data "archive_file" "lambda" {
 resource "aws_lambda_function" "team_sns_handler" {
   filename      = "lambda_function_payload.zip"
   function_name = var.function_name
-  role          = aws_iam_role.lambda_execution
+  role          = aws_iam_role.lambda_execution.arn
 
   source_code_hash = data.archive_file.lambda.output_base64sha256
 }
