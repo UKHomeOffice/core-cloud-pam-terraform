@@ -19,12 +19,12 @@ data "aws_iam_policy_document" "assume_role" {
 
 resource "aws_iam_role" "lambda_execution" {
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
-  name               = "TEAM-SNS-handler-role"
+  name               = var.role_name
   path               = "/service-role/"
 }
 
 resource "aws_iam_policy" "lambda_execution" {
-  name = "AWSLambdaBasicExecutionRole"
+  name = var.policy_name
   path = "/service-role/"
 
   policy = jsonencode({
@@ -91,8 +91,8 @@ data "aws_sns_topic" "team_notifications" {
 }
 
 resource "aws_sns_topic_subscription" "lambda" {
-  endpoint                        = aws_lambda_function.team_sns_handler.arn
-  endpoint_auto_confirms          = true
-  protocol                        = "lambda"
-  topic_arn                       = data.aws_sns_topic.team_notifications.arn
+  endpoint               = aws_lambda_function.team_sns_handler.arn
+  endpoint_auto_confirms = true
+  protocol               = "lambda"
+  topic_arn              = data.aws_sns_topic.team_notifications.arn
 }

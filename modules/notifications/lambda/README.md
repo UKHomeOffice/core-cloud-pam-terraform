@@ -35,6 +35,8 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_function_name"></a> [function\_name](#input\_function\_name) | Lambda function name | `string` | n/a | yes |
 | <a name="input_lambda_permission_sid"></a> [lambda\_permission\_sid](#input\_lambda\_permission\_sid) | Statement ID of the Lambda permission | `string` | n/a | yes |
+| <a name="input_policy_name"></a> [policy\_name](#input\_policy\_name) | Name of the policy attached to the Lambda execution role | `string` | n/a | yes |
+| <a name="input_role_name"></a> [role\_name](#input\_role\_name) | Name of the Lambda execution role | `string` | n/a | yes |
 | <a name="input_sns_topic_name"></a> [sns\_topic\_name](#input\_sns\_topic\_name) | Name of the SNS topic (created by TEAM installation) | `string` | n/a | yes |
 | <a name="input_source_file"></a> [source\_file](#input\_source\_file) | Path to the lambda source file | `string` | n/a | yes |
 
