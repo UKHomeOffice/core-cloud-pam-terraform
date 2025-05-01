@@ -12,3 +12,8 @@ variable "source_file" {
   description = "Path to the lambda source file"
   type        = string
 }
+
+variable "lambda_permission_sid" {
+  description = "Statement ID of the Lambda permission"
+  type        = string
+}

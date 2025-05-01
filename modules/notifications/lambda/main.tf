@@ -79,7 +79,7 @@ resource "aws_lambda_function" "team_sns_handler" {
 }
 
 resource "aws_lambda_permission" "allow_sns" {
-  statement_id  = "AllowExecutionFromSNS"
+  statement_id  = var.lambda_permission_sid
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.team_sns_handler.function_name
   principal     = "sns.amazonaws.com"
@@ -91,7 +91,6 @@ data "aws_sns_topic" "team_notifications" {
 }
 
 resource "aws_sns_topic_subscription" "lambda" {
-  confirmation_timeout_in_minutes = null
   endpoint                        = aws_lambda_function.team_sns_handler.arn
   endpoint_auto_confirms          = true
   protocol                        = "lambda"
