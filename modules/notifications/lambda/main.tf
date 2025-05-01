@@ -64,12 +64,12 @@ resource "aws_iam_role_policy_attachment" "lambda_execution" {
 data "archive_file" "lambda" {
   type        = "zip"
   source_file = var.source_file
-  output_path = "lambda_function_payload.zip"
+  output_path = "${path.module}/lambda_function_payload.zip"
 }
 
 resource "aws_lambda_function" "team_sns_handler" {
   architectures = ["arm64"]
-  filename      = "lambda_function_payload.zip"
+  filename      = data.archive_file.lambda.output_path
   function_name = var.function_name
   handler       = "lambda_function.lambda_handler"
   role          = aws_iam_role.lambda_execution.arn
