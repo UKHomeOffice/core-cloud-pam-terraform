@@ -57,7 +57,7 @@ resource "aws_iam_policy" "lambda_execution" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_execution" {
-  role       = aws_iam_role.lambda_execution
+  role       = aws_iam_role.lambda_execution.name
   policy_arn = aws_iam_policy.lambda_execution.arn
 }
 
