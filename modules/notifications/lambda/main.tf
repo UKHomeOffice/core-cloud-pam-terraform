@@ -50,7 +50,7 @@ resource "aws_iam_policy" "lambda_execution" {
           "secretsmanager:GetSecretValue"
         ]
         Effect  = "Allow"
-        Resouce = ["arn:aws:secretsmanager:eu-west-2:${local.account_id}:secret:TEAM-IDC-APP*"]
+        Resource = ["arn:aws:secretsmanager:eu-west-2:${local.account_id}:secret:TEAM-IDC-APP*"]
       }
     ]
   })
