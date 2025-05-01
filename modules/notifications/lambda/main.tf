@@ -23,12 +23,10 @@ resource "aws_iam_role" "lambda_execution" {
   path               = "/service-role/"
 }
 
-resource "aws_iam_role_policy" "lambda_execution" {
+resource "aws_iam_policy" "lambda_execution" {
   name = "AWSLambdaBasicExecutionRole"
-  role = aws_iam_role.lambda_execution.id
+  path = "/service-role/"
 
-  # Terraform's "jsonencode" function converts a
-  # Terraform expression result to valid JSON syntax.
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -56,6 +54,11 @@ resource "aws_iam_role_policy" "lambda_execution" {
       }
     ]
   })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_execution" {
+  role       = aws_iam_role.lambda_execution
+  policy_arn = aws_iam_policy.lambda_execution.arn
 }
 
 data "archive_file" "lambda" {
