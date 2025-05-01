@@ -18,8 +18,9 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_role" "lambda_execution" {
-  name               = "iam_for_lambda"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
+  name               = "TEAM-SNS-handler-role"
+  path               = "/service-role/"
 }
 
 resource "aws_iam_role_policy" "test_policy" {
