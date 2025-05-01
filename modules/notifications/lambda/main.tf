@@ -23,7 +23,7 @@ resource "aws_iam_role" "lambda_execution" {
   path               = "/service-role/"
 }
 
-resource "aws_iam_role_policy" "test_policy" {
+resource "aws_iam_role_policy" "lambda_execution" {
   name = "AWSLambdaBasicExecutionRole"
   role = aws_iam_role.lambda_execution.id
 
