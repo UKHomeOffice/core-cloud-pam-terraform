@@ -93,7 +93,7 @@ data "aws_sns_topic" "team_notifications" {
 resource "aws_sns_topic_subscription" "lambda" {
   confirmation_timeout_in_minutes = null
   endpoint                        = aws_lambda_function.team_sns_handler.arn
-  endpoint_auto_confirms          = null
+  endpoint_auto_confirms          = true
   protocol                        = "lambda"
   topic_arn                       = data.aws_sns_topic.team_notifications.arn
 }
