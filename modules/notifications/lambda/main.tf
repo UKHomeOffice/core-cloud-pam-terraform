@@ -49,7 +49,7 @@ resource "aws_iam_policy" "lambda_execution" {
         Action = [
           "secretsmanager:GetSecretValue"
         ]
-        Effect  = "Allow"
+        Effect   = "Allow"
         Resource = ["arn:aws:secretsmanager:eu-west-2:${local.account_id}:secret:TEAM-IDC-APP*"]
       }
     ]
@@ -91,7 +91,9 @@ data "aws_sns_topic" "team_notifications" {
 }
 
 resource "aws_sns_topic_subscription" "lambda" {
-  topic_arn = data.aws_sns_topic.team_notifications.arn
-  protocol  = "lambda"
-  endpoint  = aws_lambda_function.team_sns_handler.arn
+  confirmation_timeout_in_minutes = null
+  endpoint                        = aws_lambda_function.team_sns_handler.arn
+  endpoint_auto_confirms          = null
+  protocol                        = "lambda"
+  topic_arn                       = data.aws_sns_topic.team_notifications.arn
 }
