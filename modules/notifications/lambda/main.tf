@@ -51,6 +51,13 @@ resource "aws_iam_policy" "lambda_execution" {
         ]
         Effect   = "Allow"
         Resource = ["arn:aws:secretsmanager:eu-west-2:${local.account_id}:secret:TEAM-IDC-APP*"]
+      },
+      {
+        Action = [
+          "dynamodb:GetItem"
+        ]
+        Effect   = "Allow"
+        Resource = ["arn:aws:dynamodb:eu-west-2:${local.account_id}:table/requests-*-main"]
       }
     ]
   })
