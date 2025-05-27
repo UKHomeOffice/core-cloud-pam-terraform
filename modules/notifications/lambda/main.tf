@@ -76,13 +76,13 @@ resource "archive_file" "lambda" {
 
 resource "aws_lambda_function" "team_sns_handler" {
   architectures = ["arm64"]
-  filename      = resource.archive_file.lambda.output_path
+  filename      = archive_file.lambda.output_path
   function_name = var.function_name
   handler       = "lambda_function.lambda_handler"
   role          = aws_iam_role.lambda_execution.arn
   runtime       = "python3.13"
 
-  source_code_hash = resource.archive_file.lambda.output_base64sha256
+  source_code_hash = archive_file.lambda.output_base64sha256
 }
 
 resource "aws_lambda_permission" "allow_sns" {
