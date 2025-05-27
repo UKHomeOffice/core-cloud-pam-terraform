@@ -68,7 +68,7 @@ resource "aws_iam_role_policy_attachment" "lambda_execution" {
   policy_arn = aws_iam_policy.lambda_execution.arn
 }
 
-resource "archive_file" "lambda" {
+data "archive_file" "lambda" {
   type        = "zip"
   source_file = var.source_file
   output_path = "${path.module}/lambda_function_payload.zip"
@@ -76,13 +76,13 @@ resource "archive_file" "lambda" {
 
 resource "aws_lambda_function" "team_sns_handler" {
   architectures = ["arm64"]
-  filename      = archive_file.lambda.output_path
+  filename      = "./src/lambda_function_payload.zip"
   function_name = var.function_name
   handler       = "lambda_function.lambda_handler"
   role          = aws_iam_role.lambda_execution.arn
   runtime       = "python3.13"
 
-  source_code_hash = archive_file.lambda.output_base64sha256
+  source_code_hash = data.archive_file.lambda.output_base64sha256
 }
 
 resource "aws_lambda_permission" "allow_sns" {
