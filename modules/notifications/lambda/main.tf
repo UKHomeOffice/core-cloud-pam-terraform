@@ -71,7 +71,7 @@ resource "aws_iam_role_policy_attachment" "lambda_execution" {
 data "archive_file" "lambda" {
   type        = "zip"
   source_file = var.source_file
-  output_path = "./lambda_function_payload.zip"
+  output_path = "${path.module}/test/lambda_function_payload.zip"
 }
 
 resource "aws_lambda_function" "team_sns_handler" {
