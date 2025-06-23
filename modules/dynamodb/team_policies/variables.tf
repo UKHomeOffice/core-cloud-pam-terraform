@@ -1,4 +1,4 @@
-variable "approver_policies" {
+variable "approvers_policies" {
   description = "list of approval policies"
   type        = list
 }
