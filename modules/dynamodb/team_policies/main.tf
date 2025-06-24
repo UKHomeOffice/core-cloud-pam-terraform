@@ -52,8 +52,8 @@ locals {
         L = [
           for account in policy.accounts : {
             M = {
-              account_id   = { S = tostring(account.account_id) },
-              account_name = { S = account.account_name }
+              id   = { S = tostring(account.account_id) },
+              name = { S = account.account_name }
             }
           }
         ]
@@ -64,8 +64,14 @@ locals {
       duration = {
         S = "${tostring(policy.duration)}"
       },
+      modifiedBy = {
+        S = "Terraform"
+      },
       name = {
         S = "${data.aws_identitystore_group.eligibility_group[policy.group_name].display_name}"
+      },
+      ous = {
+        L = []
       },
       permissions = {
         L = [
@@ -83,7 +89,7 @@ locals {
       type = {
         S = "Group"
       },
-      __typeName = {
+      __typename = {
         S = "Eligibility"
       }
     })
@@ -106,6 +112,9 @@ locals {
           { S = data.aws_identitystore_group.approvers_group[policy.group_name].group_id }
         ]
       },
+      modifiedBy = {
+        S = "Terraform"
+      },
       name = {
         S = policy.account_name
       },
@@ -115,7 +124,7 @@ locals {
       type = {
         S = "Account"
       },
-      __typeName = {
+      __typename = {
         S = "Approvers"
       }
     })
