@@ -61,6 +61,9 @@ locals {
       approvalRequired = {
         BOOL = policy.approval_required
       },
+      createdAt = {
+        S = "2025-06-24T09:00:00Z"
+      },
       duration = {
         S = "${tostring(policy.duration)}"
       },
@@ -89,6 +92,9 @@ locals {
       type = {
         S = "Group"
       },
+      updatedAt = {
+        S = "2025-06-24T09:00:00Z"
+      },
       __typename = {
         S = "Eligibility"
       }
@@ -107,6 +113,9 @@ locals {
           { S = data.aws_identitystore_group.approvers_group[policy.group_name].display_name }
         ]
       },
+      createdAt = {
+        S = "2025-06-24T09:00:00Z"
+      },
       groupIds = {
         L = [
           { S = data.aws_identitystore_group.approvers_group[policy.group_name].group_id }
@@ -123,6 +132,9 @@ locals {
       },
       type = {
         S = "Account"
+      },
+      updatedAt = {
+        S = "2025-06-24T09:00:00Z"
       },
       __typename = {
         S = "Approvers"
