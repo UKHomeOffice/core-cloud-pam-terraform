@@ -131,14 +131,6 @@ locals {
   }
 }
 
-output "eligibility_items_json" {
-  value = local.eligibility_items
-}
-
-output "approvers_items_json" {
-  value = local.approvers_items
-}
-
 resource "aws_dynamodb_table_item" "eligibility" {
   for_each = local.eligibility_items
 
