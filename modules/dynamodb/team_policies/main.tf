@@ -116,7 +116,7 @@ locals {
   approvers_items = {
     for i, policy in var.approvers_policies : i => jsonencode({
       id = {
-        S = tostring(one([for acct in data.aws_organizations_organization.this.accounts : acct.id if acct.name == account.account_name]))
+        S = tostring(one([for acct in data.aws_organizations_organization.this.accounts : acct.id if acct.name == policy.account_name]))
       },
       approvers = {
         L = [
