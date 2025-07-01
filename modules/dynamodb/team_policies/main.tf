@@ -10,13 +10,44 @@ data "aws_ssoadmin_instances" "this" {}
 
 data "aws_organizations_organization" "this" {}
 
-# data "aws_organizations_organizational_unit_descendant_organizational_units" "ous" {
-#   parent_id = data.aws_organizations_organization.this.roots[0].id
-# }
+data "aws_organizations_organizational_units" "root_ous" {
+  parent_id = data.aws_organizations_organization.root.roots[0].id
+}
 
-# output "ous" {
-#   value = data.aws_organizations_organizational_unit_descendant_organizational_units.ous.children
-# }
+data "aws_organizations_organizational_units" "children_ous" {
+  for_each  = { for ou in data.aws_organizations_organizational_units.root_ous.organizational_units : ou.id => ou }
+  parent_id = each.key
+}
+
+locals {
+  # Top-level OUs
+  top_level_ous = [
+    for ou in data.aws_organizations_organizational_units.root_ous.organizational_units : {
+      ou_id = ou.id
+      name  = ou.name
+    }
+  ]
+
+  # Second-level OUs (children)
+  second_level_ous = flatten([
+    for parent_ou_id, ous in data.aws_organizations_organizational_units.children_ous : [
+      for ou in ous.organizational_units : {
+        ou_id = ou.id
+        name  = "${lookup(
+          { for ou in data.aws_organizations_organizational_units.root_ous.organizational_units : ou.id => ou.name },
+          parent_ou_id,
+          "UNKNOWN"
+        )}/${ou.name}"
+      }
+    ]
+  ])
+
+  all_ous = concat(local.top_level_ous, local.second_level_ous)
+}
+
+output "all_out" {
+  value = local.all_ous
+}
 
 data "aws_identitystore_group" "approvers_group" {
   # for_each = toset(var.approver_policies)
