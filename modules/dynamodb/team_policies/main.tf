@@ -23,7 +23,7 @@ locals {
   # Top-level OUs
   top_level_ous = [
     for ou in data.aws_organizations_organizational_units.root_ous.children : {
-      id   = ou.id
+      ou_id   = ou.id
       name = ou.name
     }
   ]
@@ -159,7 +159,7 @@ locals {
       id = {
         # var.a == "" ? "default-a" : var.a
 
-        S = lower(policy.type) == "account" ? tostring(one([for acct in data.aws_organizations_organization.this.accounts : acct.id if acct.name == policy.name])) : tostring(one([for ou in local.all_ous : ou.id if ou.name == policy.name]))
+        S = lower(policy.type) == "account" ? tostring(one([for acct in data.aws_organizations_organization.this.accounts : acct.id if acct.name == policy.name])) : tostring(one([for ou in local.all_ous : ou.ou_id if ou.name == policy.name]))
       },
       approvers = {
         L = [
@@ -178,7 +178,7 @@ locals {
         S = "Terraform"
       },
       name = {
-        S = lower(policy.type) == "account" ? policy.name : element(split("/", policy.name), -1)
+        S = lower(policy.type) == "account" ? policy.name : element(tolist(split("/", policy.name)), -1)
       },
       ticketNo = {
         S = policy.ticket_no
