@@ -15,14 +15,14 @@ data "aws_organizations_organizational_units" "root_ous" {
 }
 
 data "aws_organizations_organizational_units" "children_ous" {
-  for_each  = { for ou in data.aws_organizations_organizational_units.root_ous.organizational_units : ou.id => ou }
+  for_each  = { for ou in data.aws_organizations_organizational_units.root_ous.children : ou.id => ou }
   parent_id = each.key
 }
 
 locals {
   # Top-level OUs
   top_level_ous = [
-    for ou in data.aws_organizations_organizational_units.root_ous.organizational_units : {
+    for ou in data.aws_organizations_organizational_units.root_ous.children : {
       ou_id = ou.id
       name  = ou.name
     }
@@ -31,10 +31,10 @@ locals {
   # Second-level OUs (children)
   second_level_ous = flatten([
     for parent_ou_id, ous in data.aws_organizations_organizational_units.children_ous : [
-      for ou in ous.organizational_units : {
+      for ou in ous.children : {
         ou_id = ou.id
         name  = "${lookup(
-          { for ou in data.aws_organizations_organizational_units.root_ous.organizational_units : ou.id => ou.name },
+          { for ou in data.aws_organizations_organizational_units.root_ous.children : ou.id => ou.name },
           parent_ou_id,
           "UNKNOWN"
         )}/${ou.name}"
