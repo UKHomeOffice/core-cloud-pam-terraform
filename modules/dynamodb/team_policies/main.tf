@@ -23,8 +23,8 @@ locals {
   # Top-level OUs
   top_level_ous = [
     for ou in data.aws_organizations_organizational_units.root_ous.children : {
-      ou_id = ou.id
-      name  = ou.name
+      id   = ou.id
+      name = ou.name
     }
   ]
 
@@ -33,7 +33,7 @@ locals {
     for parent_ou_id, ous in data.aws_organizations_organizational_units.children_ous : [
       for ou in ous.children : {
         ou_id = ou.id
-        name  = "${lookup(
+        name = "${lookup(
           { for ou in data.aws_organizations_organizational_units.root_ous.children : ou.id => ou.name },
           parent_ou_id,
           "UNKNOWN"
@@ -147,7 +147,9 @@ locals {
   approvers_items = {
     for i, policy in var.approvers_policies : i => jsonencode({
       id = {
-        S = tostring(one([for acct in data.aws_organizations_organization.this.accounts : acct.id if acct.name == policy.account_name]))
+        # var.a == "" ? "default-a" : var.a
+
+        S = lower(policy.type) == "account" ? tostring(one([for acct in data.aws_organizations_organization.this.accounts : acct.id if acct.name == policy.name])) : tostring(one([for ou in local.all_ous : ou.id if ou.name == policy.name]))
       },
       approvers = {
         L = [
@@ -166,13 +168,13 @@ locals {
         S = "Terraform"
       },
       name = {
-        S = policy.account_name
+        S = lower(policy.type) == "account" ? policy.name : element(split("/", policy.name), -1)
       },
       ticketNo = {
         S = policy.ticket_no
       },
       type = {
-        S = "Account"
+        S = lower(policy.type) == "account" ? "Account" : "OU"
       },
       updatedAt = {
         S = "2025-06-24T09:00:00Z"
