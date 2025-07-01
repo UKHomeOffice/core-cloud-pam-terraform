@@ -178,7 +178,7 @@ locals {
         S = "Terraform"
       },
       name = {
-        S = lower(policy.type) == "account" ? policy.name : element(tolist(split("/", policy.name)), -1)
+        S = lower(policy.type) == "account" ? policy.name : element(split("/", policy.name), length(split("/", "Workloads/NotProd")) - 1)
       },
       ticketNo = {
         S = policy.ticket_no
