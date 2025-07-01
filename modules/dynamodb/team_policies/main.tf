@@ -11,7 +11,7 @@ data "aws_ssoadmin_instances" "this" {}
 data "aws_organizations_organization" "this" {}
 
 data "aws_organizations_organizational_units" "root_ous" {
-  parent_id = data.aws_organizations_organization.root.roots[0].id
+  parent_id = data.aws_organizations_organization.this.roots[0].id
 }
 
 data "aws_organizations_organizational_units" "children_ous" {
