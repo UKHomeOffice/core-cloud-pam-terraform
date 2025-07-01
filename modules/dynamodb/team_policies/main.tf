@@ -14,6 +14,14 @@ output "accounts" {
   value = data.aws_organizations_organization.this.accounts
 }
 
+data "aws_organizations_organizational_unit_descendant_organizational_units" "ous" {
+  parent_id = data.aws_organizations_organization.this.roots[0].id
+}
+
+output "ous" {
+  value = data.aws_organizations_organizational_unit_descendant_organizational_units.ous.children
+}
+
 data "aws_identitystore_group" "approvers_group" {
   # for_each = toset(var.approver_policies)
   for_each = { for policy in var.approvers_policies : policy.group_name => policy }
