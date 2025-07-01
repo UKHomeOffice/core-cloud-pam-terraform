@@ -10,17 +10,13 @@ data "aws_ssoadmin_instances" "this" {}
 
 data "aws_organizations_organization" "this" {}
 
-output "accounts" {
-  value = data.aws_organizations_organization.this.accounts
-}
+# data "aws_organizations_organizational_unit_descendant_organizational_units" "ous" {
+#   parent_id = data.aws_organizations_organization.this.roots[0].id
+# }
 
-data "aws_organizations_organizational_unit_descendant_organizational_units" "ous" {
-  parent_id = data.aws_organizations_organization.this.roots[0].id
-}
-
-output "ous" {
-  value = data.aws_organizations_organizational_unit_descendant_organizational_units.ous.children
-}
+# output "ous" {
+#   value = data.aws_organizations_organizational_unit_descendant_organizational_units.ous.children
+# }
 
 data "aws_identitystore_group" "approvers_group" {
   # for_each = toset(var.approver_policies)
@@ -66,7 +62,7 @@ locals {
         L = [
           for account in policy.accounts : {
             M = {
-              id   = { S = tostring(account.account_id) },
+              id   = { S = tostring(one([for acct in data.aws_organizations_organization.org.accounts : acct.id if acct.name == account.account_name])) },
               name = { S = account.account_name }
             }
           }
@@ -120,7 +116,7 @@ locals {
   approvers_items = {
     for i, policy in var.approvers_policies : i => jsonencode({
       id = {
-        S = tostring(policy.account_id)
+        S = tostring(one([for acct in data.aws_organizations_organization.org.accounts : acct.id if acct.name == account.account_name]))
       },
       approvers = {
         L = [
