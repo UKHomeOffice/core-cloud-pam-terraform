@@ -8,6 +8,12 @@ data "aws_dynamodb_table" "approvers_table" {
 
 data "aws_ssoadmin_instances" "this" {}
 
+data "aws_organizations_organization" "this" {}
+
+output "accounts" {
+  value = data.aws_organizations_organization.this.accounts
+}
+
 data "aws_identitystore_group" "approvers_group" {
   # for_each = toset(var.approver_policies)
   for_each = { for policy in var.approvers_policies : policy.group_name => policy }
