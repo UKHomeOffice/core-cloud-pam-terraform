@@ -49,9 +49,18 @@ output "all_out" {
   value = local.all_ous
 }
 
+locals {
+  # This keeps only the *last* occurrence of each group_name
+  unique_approvers_groups = {
+    for policy in var.approvers_policies : policy.group_name => policy
+  }
+}
+
+
 data "aws_identitystore_group" "approvers_group" {
   # for_each = toset(var.approver_policies)
-  for_each = { for policy in var.approvers_policies : policy.group_name => policy }
+  # for_each = { for policy in var.approvers_policies : policy.group_name => policy }
+  for_each = local.unique_approvers_groups
 
   identity_store_id = tolist(data.aws_ssoadmin_instances.this.identity_store_ids)[0]
 
