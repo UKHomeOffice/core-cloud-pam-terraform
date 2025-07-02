@@ -119,9 +119,9 @@ locals {
       },
       ous = {
         L = [
-          for ou in policy.ous : {
+          for org_unit in policy.ous : {
             M = {
-              id   = { S = tostring(one([for ou in local.all_ous : ou.id if ou.name == ou])) },
+              id   = { S = tostring(one([for ou in local.all_ous : ou.id if ou.name == org_unit])) },
               name = { S = element(split("/", ou), length(split("/", ou)) - 1) }
             }
           }
