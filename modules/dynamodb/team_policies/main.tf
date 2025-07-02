@@ -79,11 +79,15 @@ data "aws_identitystore_group" "eligibility_group" {
   }
 }
 
+locals {
+  unique_permission_set_names = toset(flatten([for policy in var.eligibility_policies : policy.permissions]))
+}
+
 data "aws_ssoadmin_permission_set" "this" {
-  for_each = { for policy in var.eligibility_policies : policy.group_name => policy }
+  for_each = local.unique_permission_set_names
 
   instance_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
-  name         = each.value.permissions
+  name         = each.key
 }
 
 locals {
@@ -129,10 +133,10 @@ locals {
       },
       permissions = {
         L = [
-          {
+          for permission in policy.permissions : {
             M = {
-              id   = { S = data.aws_ssoadmin_permission_set.this[policy.group_name].id },
-              name = { S = policy.permissions }
+              id   = { S = data.aws_ssoadmin_permission_set.this[permission].id },
+              name = { S = permission }
             }
           }
         ]
