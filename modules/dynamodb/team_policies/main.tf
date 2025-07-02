@@ -100,7 +100,7 @@ data "aws_ssoadmin_permission_set" "this" {
 
 locals {
   eligibility_items = {
-    for idx, policy in var.eligibility_policies : idx => jsonencode({
+    for i, policy in var.eligibility_policies : i => jsonencode({
       id = {
         S = data.aws_identitystore_group.eligibility_group[policy.group_name].group_id
       },
