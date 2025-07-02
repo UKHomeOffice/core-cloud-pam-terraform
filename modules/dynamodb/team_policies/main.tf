@@ -149,6 +149,10 @@ locals {
   }
 }
 
+output "eligibility_items" {
+  value = local.eligibility_items
+}
+
 locals {
   approvers_items = {
     for i, policy in var.approvers_policies : i => jsonencode({
