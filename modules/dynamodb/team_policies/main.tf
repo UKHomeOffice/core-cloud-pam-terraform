@@ -45,10 +45,6 @@ locals {
   all_ous = concat(local.top_level_ous, local.second_level_ous)
 }
 
-output "all_out" {
-  value = local.all_ous
-}
-
 locals {
   unique_approvers_group_names = toset([for p in var.approvers_policies : trimspace(p.group_name)])
 }
