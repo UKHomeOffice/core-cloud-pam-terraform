@@ -23,7 +23,7 @@ locals {
   # Top-level OUs
   top_level_ous = [
     for ou in data.aws_organizations_organizational_units.root_ous.children : {
-      ou_id   = ou.id
+      id   = ou.id
       name = ou.name
     }
   ]
@@ -32,7 +32,7 @@ locals {
   second_level_ous = flatten([
     for parent_ou_id, ous in data.aws_organizations_organizational_units.children_ous : [
       for ou in ous.children : {
-        ou_id = ou.id
+        id = ou.id
         name = "${lookup(
           { for ou in data.aws_organizations_organizational_units.root_ous.children : ou.id => ou.name },
           parent_ou_id,
@@ -152,7 +152,7 @@ locals {
       id = {
         # var.a == "" ? "default-a" : var.a
 
-        S = lower(policy.type) == "account" ? tostring(one([for acct in data.aws_organizations_organization.this.accounts : acct.id if acct.name == policy.name])) : tostring(one([for ou in local.all_ous : ou.ou_id if ou.name == policy.name]))
+        S = lower(policy.type) == "account" ? tostring(one([for acct in data.aws_organizations_organization.this.accounts : acct.id if acct.name == policy.name])) : tostring(one([for ou in local.all_ous : ou.id if ou.name == policy.name]))
       },
       approvers = {
         L = [
