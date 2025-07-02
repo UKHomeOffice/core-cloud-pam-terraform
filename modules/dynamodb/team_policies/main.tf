@@ -114,7 +114,14 @@ locals {
         S = "${data.aws_identitystore_group.eligibility_group[policy.group_name].display_name}"
       },
       ous = {
-        L = []
+        L = [
+          for ou in policy.ous : {
+            M = {
+              id   = { S = tostring(one([for ou in local.all_ous : ou.id if ou.name == ou])) },
+              name = { S = element(split("/", ou), length(split("/", ou)) - 1) }
+            }
+          }
+        ]
       },
       permissions = {
         L = [
@@ -146,8 +153,6 @@ locals {
   approvers_items = {
     for i, policy in var.approvers_policies : i => jsonencode({
       id = {
-        # var.a == "" ? "default-a" : var.a
-
         S = lower(policy.type) == "account" ? tostring(one([for acct in data.aws_organizations_organization.this.accounts : acct.id if acct.name == policy.name])) : tostring(one([for ou in local.all_ous : ou.id if ou.name == policy.name]))
       },
       approvers = {
@@ -167,7 +172,7 @@ locals {
         S = "Terraform"
       },
       name = {
-        S = lower(policy.type) == "account" ? policy.name : element(split("/", policy.name), length(split("/", "Workloads/NotProd")) - 1)
+        S = lower(policy.type) == "account" ? policy.name : element(split("/", policy.name), length(split("/", policy.name)) - 1)
       },
       ticketNo = {
         S = policy.ticket_no
