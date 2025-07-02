@@ -19,6 +19,14 @@ data "aws_organizations_organizational_units" "children_ous" {
   parent_id = each.key
 }
 
+# Build a list of maps of all OUs with their full path and ID
+# [
+#   {
+#     id   = "ou-abc1-1234abc"
+#     name = "Workloads/NotProd"
+#   },
+#   ....
+# ]
 locals {
   # Top-level OUs
   top_level_ous = [
@@ -42,15 +50,14 @@ locals {
     ]
   ])
 
+  # Add additional levels of OUs here as required
+
   all_ous = concat(local.top_level_ous, local.second_level_ous)
 }
 
-output "all_ous" {
-  value = local.all_ous
-}
-
+# Read all unique approvers groups
 locals {
-  unique_approvers_group_names = toset([for p in var.approvers_policies : trimspace(p.group_name)])
+  unique_approvers_group_names = toset([for policy in var.approvers_policies : trimspace(policy.group_name)])
 }
 
 data "aws_identitystore_group" "approvers_group" {
@@ -79,6 +86,7 @@ data "aws_identitystore_group" "eligibility_group" {
   }
 }
 
+# Read all unique Permissions Sets
 locals {
   unique_permission_set_names = toset(flatten([for policy in var.eligibility_policies : policy.permissions]))
 }
@@ -87,7 +95,7 @@ data "aws_ssoadmin_permission_set" "this" {
   for_each = local.unique_permission_set_names
 
   instance_arn = tolist(data.aws_ssoadmin_instances.this.arns)[0]
-  name         = each.key
+  name         = each.value
 }
 
 locals {
@@ -155,10 +163,6 @@ locals {
       }
     })
   }
-}
-
-output "eligibility_items" {
-  value = local.eligibility_items
 }
 
 locals {
