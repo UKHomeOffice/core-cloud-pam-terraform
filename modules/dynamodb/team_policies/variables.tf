@@ -1,6 +1,6 @@
 variable "approvers_policies" {
   description = "list of approval policies"
-  type        = list
+  type        = list(any)
 }
 
 variable "approvers_table_name" {
@@ -10,7 +10,7 @@ variable "approvers_table_name" {
 
 variable "eligibility_policies" {
   description = "list of eligibility policies"
-  type        = list
+  type        = list(any)
 }
 
 variable "eligibility_table_name" {
