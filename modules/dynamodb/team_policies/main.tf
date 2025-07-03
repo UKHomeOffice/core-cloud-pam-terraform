@@ -57,7 +57,7 @@ locals {
 
 # Read all unique approvers groups
 locals {
-  unique_approvers_group_names = toset([for policy in var.approvers_policies : trimspace(policy.group_name)])
+  unique_approvers_group_names = toset(flatten([for policy in var.approvers_policies : policy.approvers_groups]))
 }
 
 data "aws_identitystore_group" "approvers_group" {
