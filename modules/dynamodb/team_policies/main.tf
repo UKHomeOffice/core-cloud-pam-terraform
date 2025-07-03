@@ -173,7 +173,8 @@ locals {
       },
       approvers = {
         L = [
-          { S = data.aws_identitystore_group.approvers_group[policy.group_name].display_name }
+          for approvers_group in policy.approvers_groups :
+            { S = data.aws_identitystore_group.approvers_group[approvers_group].display_name }
         ]
       },
       createdAt = {
@@ -181,7 +182,8 @@ locals {
       },
       groupIds = {
         L = [
-          { S = data.aws_identitystore_group.approvers_group[policy.group_name].group_id }
+          for approvers_group in policy.approvers_groups :
+            { S = data.aws_identitystore_group.approvers_group[policy.group_name].group_id }
         ]
       },
       modifiedBy = {
