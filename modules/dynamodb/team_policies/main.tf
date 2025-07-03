@@ -183,7 +183,7 @@ locals {
       groupIds = {
         L = [
           for approvers_group in policy.approvers_groups :
-            { S = data.aws_identitystore_group.approvers_group[policy.group_name].group_id }
+            { S = data.aws_identitystore_group.approvers_group[approvers_group].group_id }
         ]
       },
       modifiedBy = {
