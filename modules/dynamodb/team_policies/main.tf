@@ -28,6 +28,12 @@ data "aws_organizations_organizational_units" "children_ous" {
 #   ....
 # ]
 locals {
+  # Root OU
+  root_ou = {
+    id   = data.aws_organizations_organization.this.roots[0].id
+    name = "Root"
+  }
+
   # Top-level OUs
   top_level_ous = [
     for ou in data.aws_organizations_organizational_units.root_ous.children : {
@@ -52,7 +58,7 @@ locals {
 
   # Add additional levels of OUs here as required
 
-  all_ous = concat(local.top_level_ous, local.second_level_ous)
+  all_ous = concat(local.root_ou, local.top_level_ous, local.second_level_ous)
 }
 
 # Read all unique approvers groups
