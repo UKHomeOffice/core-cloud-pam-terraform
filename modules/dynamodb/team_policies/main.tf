@@ -29,10 +29,10 @@ data "aws_organizations_organizational_units" "children_ous" {
 # ]
 locals {
   # Root OU
-  root_ou = {
+  root_ou = [{
     id   = data.aws_organizations_organization.this.roots[0].id
     name = "Root"
-  }
+  }]
 
   # Top-level OUs
   top_level_ous = [
