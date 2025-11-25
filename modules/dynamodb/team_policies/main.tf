@@ -89,10 +89,39 @@ locals {
   ])
 
   # Add additional levels of OUs here as required
+  third_level_ous = flatten([
+  for parent_ou_id, ous in data.aws_organizations_organizational_units.level3_ous : [
+    for ou in ous.children : {
+      id = ou.id
+      name = "${lookup(
+        { for ou in local.second_level_ous : ou.id => ou.name },
+        parent_ou_id,
+        "UNKNOWN"
+      )}/${ou.name}"
+    }
+  ]
+])
 
-  all_ous = concat(local.root_ou, local.top_level_ous, local.second_level_ous)
+fourth_level_ous = flatten([
+  for parent_ou_id, ous in data.aws_organizations_organizational_units.level4_ous : [
+    for ou in ous.children : {
+      id = ou.id
+      name = "${lookup(
+        { for ou in local.third_level_ous : ou.id => ou.name },
+        parent_ou_id,
+        "UNKNOWN"
+      )}/${ou.name}"
+    }
+  ]
+])
+
+
+  all_ous = concat(local.root_ou, local.top_level_ous, local.second_level_ous, local.third_level_ous, local.fourth_level_ous)
 }
 
+output "all_ous" {
+  value = local.all_ous
+}
 # Read all unique approvers groups
 locals {
   unique_approvers_group_names = toset(flatten([for policy in var.approvers_policies : policy.approvers_groups]))
