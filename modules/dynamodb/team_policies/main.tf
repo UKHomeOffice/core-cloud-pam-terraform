@@ -14,9 +14,17 @@ data "aws_organizations_organizational_units" "root_ous" {
   parent_id = data.aws_organizations_organization.this.roots[0].id
 }
 
+output "root_ous" {
+  value = data.aws_organizations_organizational_units.root_ous
+}
+
 data "aws_organizations_organizational_units" "children_ous" {
   for_each  = { for ou in data.aws_organizations_organizational_units.root_ous.children : ou.id => ou }
   parent_id = each.key
+}
+
+output "children_ous" {
+  value = data.aws_organizations_organizational_units.children_ous
 }
 
 # Build a list of maps of all OUs with their full path and ID
