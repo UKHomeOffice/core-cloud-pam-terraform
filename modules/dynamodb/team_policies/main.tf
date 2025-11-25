@@ -105,6 +105,10 @@ locals {
   all_ous = concat(local.root_ou, local.top_level_ous, local.second_level_ous, local.third_level_ous, local.fourth_level_ous)
 }
 
+output "all_ous" {
+  value = local.all_ous
+}
+
 # Read all unique approvers groups
 locals {
   unique_approvers_group_names = toset(flatten([for policy in var.approvers_policies : policy.approvers_groups]))
