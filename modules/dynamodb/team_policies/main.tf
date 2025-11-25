@@ -27,6 +27,18 @@ output "children_ous" {
   value = data.aws_organizations_organizational_units.children_ous
 }
 
+data "aws_organizations_organizational_units" "level3_ous" {
+  for_each = merge([
+    for parent in data.aws_organizations_organizational_units.children_ous :
+    { for child in parent.children : child.id => child }
+  ]...)
+
+  parent_id = each.key
+}
+output "level3_ous" {
+  value = data.aws_organizations_organizational_units.level3_ous
+}
+
 # Build a list of maps of all OUs with their full path and ID
 # [
 #   {
