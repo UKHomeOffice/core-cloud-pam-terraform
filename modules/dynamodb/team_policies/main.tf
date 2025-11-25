@@ -10,12 +10,30 @@ data "aws_ssoadmin_instances" "this" {}
 
 data "aws_organizations_organization" "this" {}
 
-data "aws_organizations_organizational_units" "root_ous" {
+data "aws_organizations_organizational_units" "level1_ous" {
   parent_id = data.aws_organizations_organization.this.roots[0].id
 }
 
-data "aws_organizations_organizational_units" "children_ous" {
-  for_each  = { for ou in data.aws_organizations_organizational_units.root_ous.children : ou.id => ou }
+data "aws_organizations_organizational_units" "level2_ous" {
+  for_each  = { for ou in data.aws_organizations_organizational_units.level1_ous.children : ou.id => ou }
+  parent_id = each.key
+}
+
+data "aws_organizations_organizational_units" "level3_ous" {
+  for_each = merge([
+    for parent in data.aws_organizations_organizational_units.level2_ous :
+    { for child in parent.children : child.id => child }
+  ]...)
+
+  parent_id = each.key
+}
+
+data "aws_organizations_organizational_units" "level4_ous" {
+  for_each = merge([
+    for parent in data.aws_organizations_organizational_units.level3_ous :
+    { for child in parent.children : child.id => child }
+  ]...)
+
   parent_id = each.key
 }
 
@@ -34,21 +52,21 @@ locals {
     name = "Root"
   }]
 
-  # Top-level OUs
+  # Top-level OUs, e.g. Workloads, Products, Security, Infrastructure
   top_level_ous = [
-    for ou in data.aws_organizations_organizational_units.root_ous.children : {
+    for ou in data.aws_organizations_organizational_units.level1_ous.children : {
       id   = ou.id
       name = ou.name
     }
   ]
 
-  # Second-level OUs (children)
+  # Second-level OUs, e.g. Workloads/Portfolio, Products/NotLive
   second_level_ous = flatten([
-    for parent_ou_id, ous in data.aws_organizations_organizational_units.children_ous : [
+    for parent_ou_id, ous in data.aws_organizations_organizational_units.level2_ous : [
       for ou in ous.children : {
         id = ou.id
         name = "${lookup(
-          { for ou in data.aws_organizations_organizational_units.root_ous.children : ou.id => ou.name },
+          { for ou in local.top_level_ous : ou.id => ou.name },
           parent_ou_id,
           "UNKNOWN"
         )}/${ou.name}"
@@ -56,9 +74,35 @@ locals {
     ]
   ])
 
-  # Add additional levels of OUs here as required
+  # Third-level OUs, e.g. Workloads/Portfolio/ProductFamily
+  third_level_ous = flatten([
+    for parent_ou_id, ous in data.aws_organizations_organizational_units.level3_ous : [
+      for ou in ous.children : {
+        id = ou.id
+        name = "${lookup(
+          { for ou in local.second_level_ous : ou.id => ou.name },
+          parent_ou_id,
+          "UNKNOWN"
+        )}/${ou.name}"
+      }
+    ]
+  ])
 
-  all_ous = concat(local.root_ou, local.top_level_ous, local.second_level_ous)
+  # Fourth-level OUs, e.g. Workloads/Portfolio/ProductFamily/NotProd
+  fourth_level_ous = flatten([
+    for parent_ou_id, ous in data.aws_organizations_organizational_units.level4_ous : [
+      for ou in ous.children : {
+        id = ou.id
+        name = "${lookup(
+          { for ou in local.third_level_ous : ou.id => ou.name },
+          parent_ou_id,
+          "UNKNOWN"
+        )}/${ou.name}"
+      }
+    ]
+  ])
+
+  all_ous = concat(local.root_ou, local.top_level_ous, local.second_level_ous, local.third_level_ous, local.fourth_level_ous)
 }
 
 # Read all unique approvers groups
