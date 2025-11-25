@@ -66,7 +66,7 @@ locals {
       for ou in ous.children : {
         id = ou.id
         name = "${lookup(
-          { for ou in data.aws_organizations_organizational_units.level1_ous.children : ou.id => ou.name },
+          { for ou in local.top_level_ous : ou.id => ou.name },
           parent_ou_id,
           "UNKNOWN"
         )}/${ou.name}"
