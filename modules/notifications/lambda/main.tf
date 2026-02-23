@@ -74,6 +74,25 @@ data "archive_file" "lambda" {
   output_path = "${path.module}/lambda_function_payload.zip"
 }
 
+resource "aws_signer_signing_profile" "lambda_signing" {
+  name        = "lambda-signing-profile"
+  platform_id = "AWSLambda-SHA384-ECDSA"
+}
+
+resource "aws_lambda_code_signing_config" "csc" {
+  description = "Code signing config for Lambda"
+
+  allowed_publishers {
+    signing_profile_version_arns = [
+      aws_signer_signing_profile.lambda_signing.arn
+    ]
+  }
+
+  policies {
+    untrusted_artifact_on_deployment = "Enforce"
+  }
+}
+
 resource "aws_lambda_function" "team_sns_handler" {
   architectures = ["arm64"]
   filename      = "./src/lambda_function_payload.zip"
@@ -82,7 +101,8 @@ resource "aws_lambda_function" "team_sns_handler" {
   role          = aws_iam_role.lambda_execution.arn
   runtime       = "python3.13"
 
-  source_code_hash = data.archive_file.lambda.output_base64sha256
+  code_signing_config_arn   = aws_lambda_code_signing_config.csc.arn
+  source_code_hash          = data.archive_file.lambda.output_base64sha256
 }
 
 resource "aws_lambda_permission" "allow_sns" {
