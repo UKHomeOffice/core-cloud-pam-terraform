@@ -91,6 +91,8 @@ resource "aws_lambda_code_signing_config" "lambda_csc" {
   policies {
     untrusted_artifact_on_deployment = "Enforce"
   }
+
+  tags = var.tags
 }
 
 resource "aws_lambda_function" "team_sns_handler" {

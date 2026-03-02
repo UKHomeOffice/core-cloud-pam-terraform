@@ -27,3 +27,18 @@ variable "source_file" {
   description = "Path to the lambda source file"
   type        = string
 }
+
+variable "tags" {
+  description = "Tags applied to all resources"
+  type        = map(string)
+  default = {
+    cost-centre : "1709144"
+    account-code : "521835"
+    portfolio-id : "cto"
+    project-id : "cc"
+    service-id : "core-platform"
+    environment-type : "prod"
+    owner-business : "cc-andromeda"
+    budget-holder : "corecloud@homeoffice.gov.uk"
+  }
+}
