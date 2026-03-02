@@ -16,4 +16,15 @@ variable "retention_period" {
 variable "tags" {
   description = "A map of tags to assign to the resource"
   type        = map(string)
+
+  default = {
+    cost-centre : "1709144"
+    account-code : "521835"
+    portfolio-id : "cto"
+    project-id : "cc"
+    service-id : "core-platform"
+    environment-type : "prod"
+    owner-business : "cc-andromeda"
+    budget-holder : "corecloud@homeoffice.gov.uk"
+  }
 }
