@@ -11,9 +11,9 @@ resource "aws_cloudtrail_event_data_store" "team_data_store" {
       portfolio-id = "cto"
       project-id   = "cc"
       service-id   = "core-platform"
-      environment-type : "prod"
-      owner-business : "cc-andromeda"
-      budget-holder : "corecloud@homeoffice.gov.uk"
+      environment-type = "prod"
+      owner-business = "cc-andromeda"
+      budget-holder = "corecloud@homeoffice.gov.uk"
     }
   )
 }
