@@ -94,15 +94,15 @@ resource "aws_lambda_code_signing_config" "csc" {
 }
 
 resource "aws_lambda_function" "team_sns_handler" {
-  architectures = ["arm64"]
-  filename      = "./src/lambda_function_payload.zip"
-  function_name = var.function_name
-  handler       = "lambda_function.lambda_handler"
-  role          = aws_iam_role.lambda_execution.arn
-  runtime       = "python3.13"
-
-  code_signing_config_arn   = aws_lambda_code_signing_config.csc.arn
-  source_code_hash          = data.archive_file.lambda.output_base64sha256
+  architectures                  = ["arm64"]
+  filename                       = "./src/lambda_function_payload.zip"
+  function_name                  = var.function_name
+  handler                        = "lambda_function.lambda_handler"
+  role                           = aws_iam_role.lambda_execution.arn
+  runtime                        = "python3.13"
+  reserved_concurrent_executions = 5
+  code_signing_config_arn        = aws_lambda_code_signing_config.csc.arn
+  source_code_hash               = data.archive_file.lambda.output_base64sha256
 }
 
 resource "aws_lambda_permission" "allow_sns" {
