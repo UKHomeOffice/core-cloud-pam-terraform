@@ -103,6 +103,10 @@ resource "aws_lambda_function" "team_sns_handler" {
   reserved_concurrent_executions = 5
   code_signing_config_arn        = aws_lambda_code_signing_config.csc.arn
   source_code_hash               = data.archive_file.lambda.output_base64sha256
+
+  tracing_config {
+    mode = "Active"
+  }
 }
 
 resource "aws_lambda_permission" "allow_sns" {
@@ -111,6 +115,11 @@ resource "aws_lambda_permission" "allow_sns" {
   function_name = aws_lambda_function.team_sns_handler.function_name
   principal     = "sns.amazonaws.com"
   source_arn    = "arn:aws:sns:eu-west-2:${local.account_id}:${var.sns_topic_name}"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_xray" {
+  role       = aws_iam_role.lambda_execution.name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
 }
 
 data "aws_sns_topic" "team_notifications" {
