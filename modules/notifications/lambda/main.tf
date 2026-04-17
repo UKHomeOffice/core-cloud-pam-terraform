@@ -114,7 +114,8 @@ resource "aws_lambda_function" "team_sns_handler" {
 }
 
 resource "aws_sqs_queue" "lambda_dlq" {
-  name = "${var.function_name}-dlq"
+  name                    = "${var.function_name}-dlq"
+  sqs_managed_sse_enabled = true
 }
 
 resource "aws_lambda_permission" "allow_sns" {
