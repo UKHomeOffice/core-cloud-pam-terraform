@@ -107,6 +107,15 @@ resource "aws_lambda_function" "team_sns_handler" {
   tracing_config {
     mode = "Active"
   }
+
+  dead_letter_config {
+    target_arn = aws_sqs_queue.lambda_dlq.arn
+  }
+}
+
+resource "aws_sqs_queue" "lambda_dlq" {
+  name                    = "${var.function_name}-dlq"
+  sqs_managed_sse_enabled = true
 }
 
 resource "aws_lambda_permission" "allow_sns" {
