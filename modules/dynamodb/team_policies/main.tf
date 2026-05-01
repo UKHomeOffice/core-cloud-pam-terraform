@@ -283,9 +283,14 @@ locals {
       }
 
       name = {
-        S = lower(policy.type) == "account"
+        S = (
+          lower(policy.type) == "account"
           ? policy.name
-          : element(split("/", policy.name), length(split("/", policy.name)) - 1)
+          : element(
+              split("/", policy.name),
+              length(split("/", policy.name)) - 1
+            )
+        )
       }
 
       type      = { S = lower(policy.type) == "account" ? "Account" : "OU" }
