@@ -117,7 +117,7 @@ data "aws_ssoadmin_permission_set" "this" {
 locals {
   invalid_ticket_numbers = [
     for i, p in var.eligibility_policies :
-    i if p.ticket_no == null || trim(p.ticket_no) == ""
+    i if p.ticket_no == null || trimspace(p.ticket_no) == ""
   ]
 
   invalid_permission_sets = flatten([
